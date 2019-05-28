@@ -10,7 +10,9 @@ import org.palladiosimulator.pcm.core.composition.AssemblyContext;
 import org.palladiosimulator.pcm.repository.PassiveResource;
 import org.palladiosimulator.pcm.resourceenvironment.HDDProcessingResourceSpecification;
 import org.palladiosimulator.pcm.resourceenvironment.ProcessingResourceSpecification;
-
+import org.palladiosimulator.simulizar.indirection.scheduler.IDataChannelResource;
+import org.palladiosimulator.simulizar.indirection.scheduler.SimNoRDDataChannelResource;
+import org.palladiosimulator.simulizar.indirection.system.DataChannel;
 import de.uka.ipd.sdq.scheduler.IPassiveResource;
 import de.uka.ipd.sdq.simucomframework.SimuComSimProcess;
 import de.uka.ipd.sdq.simucomframework.exceptions.ResourceContainerIsMissingRequiredResourceType;
@@ -52,8 +54,13 @@ public class SimulatedResourceContainer extends AbstractSimulatedResourceContain
 
         return newPassiveResource;
     }
-
-    public List<SimulatedResourceContainer> getNestedResourceContainers() {
+    
+    public IDataChannelResource getOrCreateDataChannelResource(final DataChannel dataChannel) {
+    	final IDataChannelResource newDataChannelResource = new SimNoRDDataChannelResource(dataChannel);
+    	return newDataChannelResource;
+    }
+    
+	public List<SimulatedResourceContainer> getNestedResourceContainers() {
         return this.nestedResourceContainers;
     }
 
