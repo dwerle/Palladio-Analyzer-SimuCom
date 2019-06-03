@@ -2,6 +2,7 @@ package de.uka.ipd.sdq.simucomframework.variables.stoexvisitor;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 
 import org.apache.log4j.Logger;
 
@@ -34,6 +35,7 @@ import de.uka.ipd.sdq.stoex.ProbabilityFunctionLiteral;
 import de.uka.ipd.sdq.stoex.ProductExpression;
 import de.uka.ipd.sdq.stoex.StringLiteral;
 import de.uka.ipd.sdq.stoex.TermExpression;
+import de.uka.ipd.sdq.stoex.analyser.probfunction.ProbfunctionHelper;
 import de.uka.ipd.sdq.stoex.analyser.visitors.ExpressionInferTypeVisitor;
 import de.uka.ipd.sdq.stoex.analyser.visitors.TypeEnum;
 
@@ -361,6 +363,13 @@ public class PCMStoExEvaluationVisitor extends PCMStoExSwitch {
     @Override
     public Object caseFunctionLiteral(FunctionLiteral object) {
         String functionID = object.getId();
+        if (functionID.equals(ProbfunctionHelper.NOW)) {
+        	try {
+				return ((Supplier<Double>) myStackFrame.getValue("__TIMEPROVIDER")).get();
+			} catch (ValueNotInFrameException ex) {
+				throw new RuntimeException(ex);
+			}
+        }
         ArrayList<Object> parameterValues = new ArrayList<Object>();
         for (Expression e : object.getParameters_FunctionLiteral()) {
             parameterValues.add(this.doSwitch(e));

@@ -2,6 +2,7 @@ package de.uka.ipd.sdq.simucomframework.variables.functions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import de.uka.ipd.sdq.probfunction.math.IPDFFactory;
 import de.uka.ipd.sdq.probfunction.math.IRandomGenerator;

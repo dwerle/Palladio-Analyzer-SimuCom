@@ -81,6 +81,10 @@ public class SimulatedStack<T> implements Serializable {
     public void pushStackFrame(final SimulatedStackframe<T> copyFrame) {
         stack.push(copyFrame);
     }
+    
+    public SimulatedStackframe<T> getTopFrame() {
+    	return stack.get(0);
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

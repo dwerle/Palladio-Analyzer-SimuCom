@@ -1,6 +1,7 @@
 package de.uka.ipd.sdq.simucomframework.resources;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +56,13 @@ public class SimulatedResourceContainer extends AbstractSimulatedResourceContain
         return newPassiveResource;
     }
     
+    private Map<DataChannel, IDataChannelResource> dataChannelToDataChannelResource = new HashMap<DataChannel, IDataChannelResource>();
+    
     public IDataChannelResource getOrCreateDataChannelResource(final DataChannel dataChannel) {
-    	final IDataChannelResource newDataChannelResource = new SimNoRDDataChannelResource(dataChannel);
-    	return newDataChannelResource;
+    	if (!dataChannelToDataChannelResource.containsKey(dataChannel)) {
+    		dataChannelToDataChannelResource.put(dataChannel, new SimNoRDDataChannelResource(dataChannel, this.myModel));
+    	}
+    	return dataChannelToDataChannelResource.get(dataChannel);
     }
     
 	public List<SimulatedResourceContainer> getNestedResourceContainers() {
