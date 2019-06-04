@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Level;
+import org.palladiosimulator.commons.eclipseutils.ExtensionHelper;
 import org.palladiosimulator.pcm.core.composition.AssemblyContext;
 import org.palladiosimulator.pcm.repository.PassiveResource;
 import org.palladiosimulator.pcm.resourceenvironment.HDDProcessingResourceSpecification;
 import org.palladiosimulator.pcm.resourceenvironment.ProcessingResourceSpecification;
 import org.palladiosimulator.simulizar.indirection.scheduler.IDataChannelResource;
-import org.palladiosimulator.simulizar.indirection.scheduler.SimNoRDDataChannelResource;
+import org.palladiosimulator.simulizar.indirection.scheduler.IDataChannelResourceFactory;
 import org.palladiosimulator.simulizar.indirection.system.DataChannel;
 import de.uka.ipd.sdq.scheduler.IPassiveResource;
 import de.uka.ipd.sdq.simucomframework.SimuComSimProcess;
@@ -57,14 +58,29 @@ public class SimulatedResourceContainer extends AbstractSimulatedResourceContain
     }
     
     private Map<DataChannel, IDataChannelResource> dataChannelToDataChannelResource = new HashMap<DataChannel, IDataChannelResource>();
+
+    private IDataChannelResourceFactory dataChannelResourceFactory;
     
     public IDataChannelResource getOrCreateDataChannelResource(final DataChannel dataChannel) {
+    	if (dataChannelResourceFactory == null) {
+    		initializeDataChannelResourceFactory();
+    	}
+    	
     	if (!dataChannelToDataChannelResource.containsKey(dataChannel)) {
-    		dataChannelToDataChannelResource.put(dataChannel, new SimNoRDDataChannelResource(dataChannel, this.myModel));
+    		dataChannelToDataChannelResource.put(dataChannel, dataChannelResourceFactory.createDataChannelResource(dataChannel, this.myModel));
     	}
     	return dataChannelToDataChannelResource.get(dataChannel);
     }
     
+	private void initializeDataChannelResourceFactory() {
+		List<Object> executableExtensions = ExtensionHelper.getExecutableExtensions("org.palladiosimulator.simulizar.indirection.interfaces.datachannelresourcefactory",
+		    		"dataChannelResourceFactoy");
+		dataChannelResourceFactory = executableExtensions.stream()
+			.map((it) -> (IDataChannelResourceFactory) it)
+			.findFirst()
+			.orElseThrow(() -> new IllegalStateException("No  " + IDataChannelResourceFactory.class.getName() + " found.")); 
+	}
+
 	public List<SimulatedResourceContainer> getNestedResourceContainers() {
         return this.nestedResourceContainers;
     }

@@ -2,7 +2,9 @@ package de.uka.ipd.sdq.simucomframework.variables.stackframe;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -118,6 +120,10 @@ public class SimulatedStackframe<T> implements Serializable {
             result.addAll(parentFrame.getContentsRecursive(alreadyFound));
         }
         return result;
+    }
+    
+    public Map<String, T> getDirectContents() {
+    	return Collections.unmodifiableMap(this.contents);
     }
 
     /**
